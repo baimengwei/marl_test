@@ -1,0 +1,61 @@
+org.eclipse.m2e.logback.configuration: The org.eclipse.m2e.logback.configuration bundle was activated before the state location was initialized.  Will retry after the state location is initialized.
+org.eclipse.m2e.logback.configuration: Logback config file: /home/bai/eclipse-workspace/.metadata/.plugins/org.eclipse.m2e.logback.configuration/logback.1.16.0.20200318-1040.xml
+org.eclipse.m2e.logback.configuration: Initializing logback
+initializer: Unexpected exception thrown while trying to use initializer service
+java.lang.NullPointerException: Cannot invoke "java.util.function.Supplier.get()" because "supplier" is null
+	at java.base/java.util.Optional.orElseGet(Optional.java:362)
+	at org.eclipse.osgi.internal.loader.buddy.GlobalPolicy.loadResource(GlobalPolicy.java:66)
+	at org.eclipse.osgi.internal.loader.buddy.PolicyHandler.doBuddyResourceLoading(PolicyHandler.java:171)
+	at org.eclipse.osgi.internal.loader.BundleLoader.findResource(BundleLoader.java:685)
+	at org.eclipse.osgi.internal.loader.ModuleClassLoader.getResource(ModuleClassLoader.java:216)
+	at org.eclipse.osgi.internal.framework.ContextFinder.getResource(ContextFinder.java:161)
+	at java.base/java.lang.ClassLoader.getResourceAsStream(ClassLoader.java:1746)
+	at org.python.core.PySystemState.initialize(PySystemState.java:998)
+	at org.python.core.PySystemState.initialize(PySystemState.java:955)
+	at org.python.core.PySystemState.initialize(PySystemState.java:938)
+	at org.python.pydev.jython.JythonPlugin.setupJython(JythonPlugin.java:254)
+	at org.python.pydev.jython.JythonPlugin.newPythonInterpreter(JythonPlugin.java:638)
+	at org.python.pydev.jython.JythonPlugin.newPythonInterpreter(JythonPlugin.java:629)
+	at org.python.pydev.editor.scripting.PyEditScripting.createInterpreter(PyEditScripting.java:43)
+	at org.python.pydev.editor.scripting.PyEditScripting.<init>(PyEditScripting.java:38)
+	at org.python.pydev.editor.PyEdit$3.run(PyEdit.java:583)
+	at java.base/java.lang.Thread.run(Thread.java:832)
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.python.core.PyJavaType (file:/home/bai/Desktop/eclipse/plugins/org.python.pydev.jython_8.3.0.202104101217/jython.jar) to method java.lang.Object.finalize()
+WARNING: Please consider reporting this to the maintainers of org.python.core.PyJavaType
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+
+(Eclipse:3589): Gtk-CRITICAL **: 16:26:49.480: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:3589): Gtk-CRITICAL **: 16:26:49.546: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:3589): Gtk-CRITICAL **: 16:26:49.578: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:3589): Gtk-CRITICAL **: 16:26:49.612: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:3589): Gtk-CRITICAL **: 16:26:49.645: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:3589): Gtk-CRITICAL **: 16:26:49.671: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:3589): Gtk-CRITICAL **: 16:26:49.678: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:3589): Gtk-CRITICAL **: 16:26:49.702: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:3589): Gtk-CRITICAL **: 16:26:55.517: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:3589): Gtk-CRITICAL **: 16:26:55.530: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:3589): Gtk-CRITICAL **: 16:36:35.707: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:3589): Gtk-CRITICAL **: 16:36:35.708: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:3589): Gtk-CRITICAL **: 16:36:35.710: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:3589): Gtk-CRITICAL **: 16:36:35.721: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:3589): Gtk-CRITICAL **: 16:36:35.736: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:3589): Gtk-CRITICAL **: 16:36:35.754: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
+
+(Eclipse:3589): Gtk-CRITICAL **: 16:36:35.769: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkScrollbar
