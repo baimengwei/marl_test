@@ -646,6 +646,15 @@ class clean_env2(gym.Env):
 
         self.update_flag = False
 
+    def get_obs_state(self):
+        return self.observation_space
+
+    def get_action_state(self):
+        return self.action_space
+
+    def get_object(self):
+        return self
+
     def set_update_flag(self, v):
         self.update_flag = v
 
@@ -654,9 +663,11 @@ class clean_env2(gym.Env):
 
     def reset(self):
         self.reward_total = 0
+        self.agt_pos_old = self.env.agt_pos_list
         self.env = EnvCleaner(self.agent, self.shape[0], 0)
         state_list = []
         self.step_idx = 0
+        self.done = False
         for i in range(self.agent):
             state_list.append(
                 self.env.agt_pos_list[i][0] + self.shape[0] * self.env.agt_pos_list[i][1])
@@ -673,14 +684,22 @@ class clean_env2(gym.Env):
 
         self.reward = self.env.step(action)
         if self.reward > 0.9:
-            reward_total += self.reward
-            self.reward = reward_total
+            self.reward_total += self.reward
+            self.reward += self.reward_total * 0.1
+        #
+        self.reward -= 0.1
+        #
 
-        self.reward -= 1
+        for idx, pos_old in enumerate(self.agt_pos_old):
+            if pos_old == self.env.agt_pos_list[idx]:
+                self.reward -= 0.1
 
         self.step_idx += 1
 
-        self.state, done = self.env.get_global_obs()
+        self.state, self.done = self.env.get_global_obs()
+        if self.done:
+            print('finished!')
+
         info = self.state
         # info = info.flatten()
 
@@ -690,14 +709,14 @@ class clean_env2(gym.Env):
                 self.env.agt_pos_list[i][0] + self.shape[0] * self.env.agt_pos_list[i][1])
 
         if self.max_iter < self.step_idx:
-            done = True
-            # reward -= 10
+            self.done = True
+            self.reward -= 10
 
-        return self.state, self.reward, done, info
+        return self.state, self.reward, self.done, info
 
 
 if __name__ == '__main__':
-    env = clean_env2(agent=1, shape=(11, 11, 3))
+    env = clean_env2(agent=2, shape=(11, 11, 3), max_iter=4000)
     for i in range(10):
         s = env.reset()
         time_step = 0

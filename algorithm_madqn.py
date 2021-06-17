@@ -4,7 +4,10 @@ import numpy as np
 import torch.nn as nn
 from clean_env import clean_env2
 import matplotlib.pyplot as plt
-from multiprocessing import *
+from multiprocessing import Process
+from multiprocessing import Manager
+from multiprocessing import Barrier
+from multiprocessing.managers import BaseManager
 torch.set_default_dtype(torch.float64)
 
 
@@ -71,7 +74,7 @@ class sum_tree:
 
 class memory:
     def __init__(self, env, memory_length=20000, memory_minibatch=32, alpha=0.6, beta=0.4, beta_increment=0.001):
-        self.env = env
+        self.env = env.get_object()
         self.memory_length = memory_length
         self.memory_minibatch = memory_minibatch
         self.alpha = alpha
@@ -156,7 +159,7 @@ class cnn_network(nn.Module):
 
 class network:
     def __init__(self, env, hidden_dimension=100, learning_rate=1e-3):
-        self.env = env
+        self.env = env.get_object()
         self.hidden_dimension = hidden_dimension
         self.learning_rate = learning_rate
         self.input_dimension = self.env.observation_space.shape[0]
@@ -192,7 +195,7 @@ class network:
 
 class agent_q:
     def __init__(self, env, epislon_method=1, gamma=0.99):
-        self.env = env
+        self.env = env.get_object()
         self.epislon_method = epislon_method
         self.gamma = gamma
 
@@ -304,8 +307,8 @@ class agent_q:
     class epislon_method_1:
         def __init__(self):
             self.epislon_init = 0.01
-            self.epislon_increment = 1.0005
-            self.epislon_max = 0.90
+            self.epislon_increment = 1.001
+            self.epislon_max = 0.95
 
         def update(self):
             if self.epislon_init < self.epislon_max:
@@ -320,28 +323,33 @@ class agent_q:
 
 
 class interactive(Process):
-    def __init__(self, env, qv_mag=None, barrier=None, agent_name=None,
-                 epoch_max=1000, epoch_replace=10):
+    def __init__(self, qv_mag=None, barrier=None, agent_name=None,
+                 epoch_max=1000, epoch_replace=2):
         Process.__init__(self)
-        self.env = env
+
+        env = RobotManager(address=("127.0.0.1", 8001),
+                           authkey=b"lala")
+        env.connect()
+        self.env = env.get_env()
+
         self.qv_mag = qv_mag
         self.barrier = barrier
         self.agent_name = agent_name
         self.epoch_max = epoch_max
         self.epoch_replace = epoch_replace
 
-        self.agent = agent_q(self.env['env'])
+        self.agent = agent_q(self.env)
 
     def run(self):
         self.epoch_index = 0
         self.loss_value = 0
         for i in range(self.epoch_max):
             self.epoch_index += 1
-            state = self.env['env'].reset()
+            state = self.env.reset()
             self.epoch_step = 0
             self.total_reward = 0
             while True:
-                if i > 10:
+                if i > 10 and self.agent_name == 'agent00':
                     self.env.render()
                 self.epoch_step += 1
 
@@ -352,21 +360,27 @@ class interactive(Process):
                 action = [self.qv_mag[each][0] for each in self.qv_mag.keys()]
                 if self.agent_name == 'agent0':
                     next_state, reward, done, info = \
-                        self.env['env'].step(action)
-                    self.env['env'].set_update_flag(True)
+                        self.env.step(action)
+                    self.env.set_update_flag(True)
+                    action_a = self.qv_mag[self.agent_name][0]
                     self.barrier.wait()
                 else:
                     while True:
-                        if self.env.update_flag:
-                            next_state = self.env.state
-                            reward = self.env.reward
+                        if self.env.get_update_flag():
+                            next_state = self.env.get_object().state
+                            reward = self.env.get_object().reward
+                            done = self.env.get_object().done
                             break
+                    action_a = self.qv_mag[self.agent_name][0]
                     self.barrier.wait()
                     self.env.update_flag = False
 
                 self.total_reward += reward
 
-                self.agent.memory.store(state, action, reward, next_state)
+                self.agent.memory.store(
+                    state,
+                    action_a,
+                    reward, next_state)
                 state = next_state
 
                 if self.epoch_index > 1:
@@ -391,18 +405,28 @@ class interactive(Process):
                    self.agent.epislon_method.epislon_init, self.epoch_step))
 
 
+class RobotManager(BaseManager):
+    pass
+
+
 class MultiInteractivate:
     def __init__(self):
         size = 11
-        agent = 3
-        max_iter = 5000
-        env = Manager().dict({'env': clean_env2(agent=agent,
-                                                max_iter=max_iter,
-                                                shape=(size, size, 3))})
+        agent = 2
+        max_iter = 3000
+        self.env = clean_env2(agent=agent,
+                              max_iter=max_iter,
+                              shape=(size, size, 3))
+
+        RobotManager.register("get_env", lambda: self.env)
+        self.env_mag = RobotManager(
+            address=("127.0.0.1", 8001), authkey=b"lala")
+        self.env_mag.start()
+
         qv_mag = self.create_mp_q_value()
         barrier = Barrier(agent)
 
-        self.proc = [interactive(env, qv_mag, barrier, 'agent' + str(i),
+        self.proc = [interactive(qv_mag, barrier, 'agent' + str(i),
                                  epoch_max=300)
                      for i in range(agent)]
 
